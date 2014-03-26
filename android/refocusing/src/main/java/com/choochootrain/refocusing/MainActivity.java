@@ -17,6 +17,7 @@ public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
 
     private ImageView imageView;
+    private ImageUtils imageUtils;
     private int img;
 
     @Override
@@ -24,10 +25,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        imageUtils = new ImageUtils(this);
+
         imageView = (ImageView) findViewById(R.id.imageView);
-        InputStream is = this.getResources().openRawResource(R.drawable.test);
-        Bitmap bitmap = BitmapFactory.decodeStream(is);
-        imageView.setImageBitmap(bitmap);
+        imageView.setImageBitmap(imageUtils.loadBitmap(R.drawable.test));
 
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -40,17 +41,11 @@ public class MainActivity extends Activity {
     }
 
     protected void toggleImage() {
-        Toast.makeText(this, "Loading...", Toast.LENGTH_SHORT).show();
         this.img++;
-        InputStream is;
-        if (this.img % 2 == 0)
-            is = this.getResources().openRawResource(R.drawable.test);
-        else
-            is = this.getResources().openRawResource(R.drawable.test2);
-        Bitmap bmp = BitmapFactory.decodeStream(is);
+
+        Bitmap bmp = imageUtils.loadBitmap(this.img % 2 == 0 ? R.drawable.test : R.drawable.test2);
         imageView.setImageBitmap(bmp);
         Log.d(TAG, bmp.getWidth() + "x" + bmp.getHeight());
-        Toast.makeText(this, "Done.", Toast.LENGTH_SHORT).show();
     }
 
 }
