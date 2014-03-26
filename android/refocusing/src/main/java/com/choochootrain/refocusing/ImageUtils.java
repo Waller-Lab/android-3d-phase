@@ -17,4 +17,10 @@ public class ImageUtils {
         InputStream is = this.context.getResources().openRawResource(id);
         return BitmapFactory.decodeStream(is);
     }
+
+    //TODO cache images
+    public Bitmap loadBitmap(int id, int width, int height) {
+        Bitmap bmp = loadBitmap(id);
+        return Bitmap.createScaledBitmap(bmp, width, height, false);
+    }
 }

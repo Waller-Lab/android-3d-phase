@@ -2,15 +2,11 @@ package com.choochootrain.refocusing;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import java.io.InputStream;
 
 
 public class MainActivity extends Activity {
@@ -28,7 +24,7 @@ public class MainActivity extends Activity {
         imageUtils = new ImageUtils(this);
 
         imageView = (ImageView) findViewById(R.id.imageView);
-        imageView.setImageBitmap(imageUtils.loadBitmap(R.drawable.test));
+        imageView.setImageBitmap(imageUtils.loadBitmap(R.drawable.test, 500, 400));
 
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -43,7 +39,7 @@ public class MainActivity extends Activity {
     protected void toggleImage() {
         this.img++;
 
-        Bitmap bmp = imageUtils.loadBitmap(this.img % 2 == 0 ? R.drawable.test : R.drawable.test2);
+        Bitmap bmp = imageUtils.loadBitmap(this.img % 2 == 0 ? R.drawable.test : R.drawable.test2, 500, 400);
         imageView.setImageBitmap(bmp);
         Log.d(TAG, bmp.getWidth() + "x" + bmp.getHeight());
     }
