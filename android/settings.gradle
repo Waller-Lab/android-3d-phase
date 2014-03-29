@@ -1,1 +1,1 @@
-include ':refocusing'
+include ':refocusing', ':opencv:app'

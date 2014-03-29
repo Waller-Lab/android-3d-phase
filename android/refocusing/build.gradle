@@ -20,5 +20,6 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:+'
+    compile project(':opencv:app')
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
