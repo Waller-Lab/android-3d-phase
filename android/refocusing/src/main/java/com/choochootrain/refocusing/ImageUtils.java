@@ -32,4 +32,8 @@ public class ImageUtils {
         Utils.matToBitmap(mat, bmp);
         return bmp;
     }
+
+    public Bitmap computeFocus(String dataset, float depth) {
+        return null;
+    }
 }

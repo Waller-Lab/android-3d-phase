@@ -4,21 +4,23 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Mat;
-import org.opencv.highgui.Highgui;
 
 
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
 
+    private EditText focusDepth;
+    private Button computeButton;
     private ImageView imageView;
     private ImageUtils imageUtils;
-    private int img;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -41,14 +43,26 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        focusDepth = (EditText) findViewById(R.id.focusDepth);
+
+        computeButton = (Button) findViewById(R.id.computeButton);
+        computeButton.setEnabled(false);
+        computeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float depth = Float.parseFloat(focusDepth.getText().toString());
+                Bitmap result = imageUtils.computeFocus("10-1-13", depth);
+                imageView.setImageBitmap(result);
+            }
+        });
+
         imageView = (ImageView) findViewById(R.id.imageView);
     }
 
     private void postOpenCVLoad() {
         imageUtils = new ImageUtils(this);
-
-        Mat img1 = Highgui.imread("/sdcard/cellscope/samples/test.bmp", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-        imageView.setImageBitmap(imageUtils.toBitmap(img1));
+        computeButton.setEnabled(true);
     }
 
     @Override
@@ -56,13 +70,4 @@ public class MainActivity extends Activity {
         super.onResume();
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_8, this, mLoaderCallback);
     }
-
-    protected void toggleImage() {
-        this.img++;
-
-        Bitmap bmp = imageUtils.loadBitmap(this.img % 2 == 0 ? R.drawable.test : R.drawable.test2, 500, 400);
-        imageView.setImageBitmap(bmp);
-        Log.d(TAG, bmp.getWidth() + "x" + bmp.getHeight());
-    }
-
 }
