@@ -3,18 +3,20 @@ package com.choochootrain.refocusing;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
 import java.io.InputStream;
+import java.net.URL;
 
 //TODO cache images
 public class ImageUtils {
     private Context context;
 
     public ImageUtils(Context context) {
-        this.context = context;
+         this.context = context;
     }
 
     public Bitmap loadBitmap(int id) {
