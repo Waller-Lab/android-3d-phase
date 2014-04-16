@@ -29,13 +29,19 @@ public class ImageUtils {
         return Bitmap.createScaledBitmap(bmp, width, height, false);
     }
 
+    public Bitmap computeFocus(String dataset, float depth) {
+        return null;
+    }
+
+    public Mat toMat(Bitmap bmp) {
+        Mat mat = new Mat();
+        Utils.bitmapToMat(bmp, mat);
+        return mat;
+    }
+
     public Bitmap toBitmap(Mat mat) {
         Bitmap bmp = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(mat, bmp);
         return bmp;
-    }
-
-    public Bitmap computeFocus(String dataset, float depth) {
-        return null;
     }
 }
