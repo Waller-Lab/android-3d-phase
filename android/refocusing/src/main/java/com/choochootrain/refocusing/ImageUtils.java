@@ -8,11 +8,12 @@ import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
-import java.io.InputStream;
-
 //TODO cache images
 public class ImageUtils {
     private static final String DATASET_PATH = "/sdcard/datasets/";
+    //TODO refactor this
+    private static final int DATASET_SIZE = 7;
+
     private Context context;
     private String dataset;
 
@@ -43,6 +44,22 @@ public class ImageUtils {
         int height = first.getHeight();
 
         Mat result = new Mat(height, width, CvType.CV_8UC1);
+        Mat img;
+        for (int i = 0; i < DATASET_SIZE; i++) {
+            int x = i - DATASET_SIZE / 2;
+            for (int j = 0; j < DATASET_SIZE; j++) {
+                int y = j - DATASET_SIZE / 2;
+
+                //only use bright-field images
+                if (Math.sqrt(x*x + y*y) < DATASET_SIZE / 2.0) {
+                    img = toMat(loadBitmap(i, j));
+
+                    //compute and perform shift
+
+                    //add to result
+                }
+            }
+        }
 
         return toBitmap(result);
     }
