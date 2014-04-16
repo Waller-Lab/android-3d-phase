@@ -14,23 +14,15 @@ import java.net.URL;
 //TODO cache images
 public class ImageUtils {
     private Context context;
+    private String dataset;
 
-    public ImageUtils(Context context) {
+    public ImageUtils(Context context, String dataset) {
          this.context = context;
     }
 
     public Bitmap loadBitmap(int id) {
         InputStream is = this.context.getResources().openRawResource(id);
         return BitmapFactory.decodeStream(is);
-    }
-
-    public Bitmap loadBitmap(int id, int width, int height) {
-        Bitmap bmp = loadBitmap(id);
-        return Bitmap.createScaledBitmap(bmp, width, height, false);
-    }
-
-    public Bitmap computeFocus(String dataset, float depth) {
-        return null;
     }
 
     public Mat toMat(Bitmap bmp) {
@@ -44,4 +36,9 @@ public class ImageUtils {
         Utils.matToBitmap(mat, bmp);
         return bmp;
     }
+
+    public Bitmap computeFocus(float depth) {
+        return null;
+    }
+
 }

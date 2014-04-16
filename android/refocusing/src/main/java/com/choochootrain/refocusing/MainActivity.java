@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
     }
 
     private void postOpenCVLoad() {
-        imageUtils = new ImageUtils(this);
+        imageUtils = new ImageUtils(this, DATASET);
         computeButton.setEnabled(true);
     }
 
@@ -91,7 +91,7 @@ public class MainActivity extends Activity {
 
         @Override
         protected Bitmap doInBackground(String... params) {
-            return null;
+            return imageUtils.computeFocus(Float.parseFloat(focusDepth.getText().toString()));
         }
 
         @Override
