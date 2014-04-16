@@ -13,6 +13,7 @@ import java.net.URL;
 
 //TODO cache images
 public class ImageUtils {
+    private static final String DATASET_PATH = "/sdcard/datasets/";
     private Context context;
     private String dataset;
 
@@ -20,9 +21,9 @@ public class ImageUtils {
          this.context = context;
     }
 
-    public Bitmap loadBitmap(int id) {
-        InputStream is = this.context.getResources().openRawResource(id);
-        return BitmapFactory.decodeStream(is);
+    public Bitmap loadBitmap(int row, int col) {
+        String path = DATASET_PATH + dataset + "/image" + String.format("%d%d", row, col) + ".bmp";
+        return BitmapFactory.decodeFile(path);
     }
 
     public Mat toMat(Bitmap bmp) {
@@ -38,7 +39,7 @@ public class ImageUtils {
     }
 
     public Bitmap computeFocus(float depth) {
-        return null;
+        return loadBitmap(0, 0);
     }
 
 }
