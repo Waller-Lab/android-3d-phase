@@ -3,13 +3,12 @@ package com.choochootrain.refocusing;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 
 import org.opencv.android.Utils;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
 import java.io.InputStream;
-import java.net.URL;
 
 //TODO cache images
 public class ImageUtils {
@@ -39,7 +38,13 @@ public class ImageUtils {
     }
 
     public Bitmap computeFocus(float depth) {
-        return loadBitmap(0, 0);
+        Bitmap first = loadBitmap(0, 0);
+        int width = first.getWidth();
+        int height = first.getHeight();
+
+        Mat result = new Mat(height, width, CvType.CV_8UC1);
+
+        return toBitmap(result);
     }
 
 }
