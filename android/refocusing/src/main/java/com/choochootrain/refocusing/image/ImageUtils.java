@@ -2,6 +2,7 @@ package com.choochootrain.refocusing.image;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
@@ -10,6 +11,7 @@ import org.opencv.core.Core;
 
 //TODO cache images
 public class ImageUtils {
+    private static final String TAG = "ImageUtils";
     private static final String DATASET_PATH = "/sdcard/datasets/";
     //TODO refactor this
     private static final int DATASET_SIZE = 7;
@@ -24,6 +26,7 @@ public class ImageUtils {
 
     public static Bitmap loadBitmap(String dataset, int row, int col) {
         String path = DATASET_PATH + dataset + "/image" + String.format("%d%d", row, col) + ".bmp";
+        Log.d(TAG, path);
         return BitmapFactory.decodeFile(path);
     }
 
