@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.choochootrain.refocusing.opencv.OpenCVActivity;
 import com.choochootrain.refocusing.tasks.ComputeFocusTask;
@@ -41,6 +42,7 @@ public class MainActivity extends OpenCVActivity {
     @Override
     public void postOpenCVLoad() {
         computeButton.setEnabled(true);
+        Toast.makeText(this, "OpenCV initialized successfully", Toast.LENGTH_SHORT).show();
     }
 
     public void setImage(Bitmap bmp) {
