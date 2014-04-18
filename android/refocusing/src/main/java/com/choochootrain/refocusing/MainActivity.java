@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.choochootrain.refocusing.image.ImageUtils;
 import com.choochootrain.refocusing.opencv.OpenCVActivity;
 import com.choochootrain.refocusing.tasks.ComputeFocusTask;
 
