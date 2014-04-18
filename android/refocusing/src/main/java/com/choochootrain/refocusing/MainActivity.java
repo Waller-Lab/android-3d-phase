@@ -31,7 +31,7 @@ public class MainActivity extends OpenCVActivity {
             @Override
             public void onClick(View v) {
                 float focus = Float.parseFloat(focusDepth.getText().toString());
-                new ComputeFocusTask(MainActivity.this, DATASET, focus).execute(focusDepth.getText().toString());
+                new ComputeFocusTask(MainActivity.this, DATASET).execute(focus);
             }
         });
 

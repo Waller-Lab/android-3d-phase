@@ -8,16 +8,14 @@ import android.widget.Toast;
 import com.choochootrain.refocusing.image.ImageUtils;
 import com.choochootrain.refocusing.MainActivity;
 
-public class ComputeFocusTask extends AsyncTask<String, Integer, Bitmap> {
+public class ComputeFocusTask extends AsyncTask<Float, Integer, Bitmap> {
     private MainActivity context;
     private String dataset;
-    private float focusDepth;
     private ProgressDialog progressDialog;
 
-    public ComputeFocusTask(MainActivity context, String dataset, float focusDepth) {
+    public ComputeFocusTask(MainActivity context, String dataset) {
         this.context = context;
         this.dataset = dataset;
-        this.focusDepth = focusDepth;
         this.progressDialog = new ProgressDialog(context);
     }
 
@@ -28,8 +26,8 @@ public class ComputeFocusTask extends AsyncTask<String, Integer, Bitmap> {
     }
 
     @Override
-    protected Bitmap doInBackground(String... params) {
-        return ImageUtils.computeFocus(dataset, focusDepth);
+    protected Bitmap doInBackground(Float... params) {
+        return ImageUtils.computeFocus(dataset, params[0]);
     }
 
     @Override
