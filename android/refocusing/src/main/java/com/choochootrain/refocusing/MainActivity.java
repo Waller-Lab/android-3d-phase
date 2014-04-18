@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.choochootrain.refocusing.tasks.ComputeFocusTask;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
@@ -56,7 +58,8 @@ public class MainActivity extends Activity {
         computeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ComputeFocusTask(MainActivity.this).execute(focusDepth.getText().toString());
+                float focus = Float.parseFloat(focusDepth.getText().toString());
+                new ComputeFocusTask(MainActivity.this, imageUtils, focus).execute(focusDepth.getText().toString());
             }
         });
 
@@ -74,38 +77,7 @@ public class MainActivity extends Activity {
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_8, this, mLoaderCallback);
     }
 
-    private class ComputeFocusTask extends AsyncTask<String, Integer, Bitmap> {
-        private Context context;
-        private ProgressDialog progressDialog;
-
-        public ComputeFocusTask(Context context) {
-            this.context = context;
-            this.progressDialog = new ProgressDialog(context);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            progressDialog.setMessage("Loading images...");
-            progressDialog.show();
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            return imageUtils.computeFocus(Float.parseFloat(focusDepth.getText().toString()));
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-           progressDialog.setProgress(progress[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            if (progressDialog.isShowing())
-                progressDialog.dismiss();
-
-            Toast.makeText(MainActivity.this, "Refocused image computed", Toast.LENGTH_LONG).show();
-            MainActivity.this.imageView.setImageBitmap(result);
-        }
+    public void setImage(Bitmap bmp) {
+        imageView.setImageBitmap(bmp);
     }
 }
