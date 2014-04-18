@@ -1,6 +1,5 @@
-package com.choochootrain.refocusing;
+package com.choochootrain.refocusing.image;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -23,33 +22,25 @@ public class ImageUtils {
     private static final double DX0 = 0.0053;
     private static final double DX = DX0/M; //spatial resolution
 
-
-    private Context context;
-    private String dataset;
-
-    public ImageUtils(Context context, String dataset) {
-         this.context = context;
-    }
-
-    public Bitmap loadBitmap(int row, int col) {
+    public static Bitmap loadBitmap(String dataset, int row, int col) {
         String path = DATASET_PATH + dataset + "/image" + String.format("%d%d", row, col) + ".bmp";
         return BitmapFactory.decodeFile(path);
     }
 
-    public Mat toMat(Bitmap bmp) {
+    public static Mat toMat(Bitmap bmp) {
         Mat mat = new Mat();
         Utils.bitmapToMat(bmp, mat);
         return mat;
     }
 
-    public Bitmap toBitmap(Mat mat) {
+    public static Bitmap toBitmap(Mat mat) {
         Bitmap bmp = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(mat, bmp);
         return bmp;
     }
 
-    public Bitmap computeFocus(float z) {
-        Bitmap first = loadBitmap(0, 0);
+    public static Bitmap computeFocus(String dataset, float z) {
+        Bitmap first = loadBitmap(dataset, 0, 0);
         int width = first.getWidth();
         int height = first.getHeight();
 
@@ -63,7 +54,7 @@ public class ImageUtils {
 
                 //only use bright-field images
                 if (Math.sqrt(x*x + y*y) < DATASET_SIZE / 2.0) {
-                    img = toMat(loadBitmap(i, j));
+                    img = toMat(loadBitmap(dataset, i, j));
 
                     //compute and perform shift
 
@@ -88,7 +79,7 @@ public class ImageUtils {
         return toBitmap(result);
     }
 
-    private Mat circularShift(Mat mat, int x, int y) {
+    private static Mat circularShift(Mat mat, int x, int y) {
         int w = mat.width();
         int h = mat.height();
         Mat result = Mat.zeros(w, h, CvType.CV_8UC1);

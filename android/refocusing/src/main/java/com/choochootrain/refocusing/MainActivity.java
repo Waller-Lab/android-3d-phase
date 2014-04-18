@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.choochootrain.refocusing.image.ImageUtils;
 import com.choochootrain.refocusing.opencv.OpenCVActivity;
 import com.choochootrain.refocusing.tasks.ComputeFocusTask;
 
@@ -17,7 +18,6 @@ public class MainActivity extends OpenCVActivity {
     private EditText focusDepth;
     private Button computeButton;
     private ImageView imageView;
-    private ImageUtils imageUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class MainActivity extends OpenCVActivity {
             @Override
             public void onClick(View v) {
                 float focus = Float.parseFloat(focusDepth.getText().toString());
-                new ComputeFocusTask(MainActivity.this, imageUtils, focus).execute(focusDepth.getText().toString());
+                new ComputeFocusTask(MainActivity.this, DATASET, focus).execute(focusDepth.getText().toString());
             }
         });
 
@@ -41,7 +41,6 @@ public class MainActivity extends OpenCVActivity {
 
     @Override
     public void postOpenCVLoad() {
-        imageUtils = new ImageUtils(this, DATASET);
         computeButton.setEnabled(true);
     }
 
