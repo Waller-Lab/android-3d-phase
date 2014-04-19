@@ -2,11 +2,11 @@ package com.choochootrain.refocusing.image;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
 import org.opencv.core.Core;
 
 //TODO cache images
@@ -26,7 +26,6 @@ public class ImageUtils {
 
     public static Bitmap loadBitmap(String dataset, int row, int col) {
         String path = DATASET_PATH + dataset + "/image" + String.format("%d%d", row, col) + ".bmp";
-        Log.d(TAG, path);
         return BitmapFactory.decodeFile(path);
     }
 
@@ -47,7 +46,7 @@ public class ImageUtils {
         int width = first.getWidth();
         int height = first.getHeight();
 
-        Mat result = new Mat(height, width, CvType.CV_8UC1);
+        Mat result = new Mat(height, width, CvType.CV_8UC4);
         Mat img;
         Mat shifted;
         for (int i = 0; i < DATASET_SIZE; i++) {
@@ -82,17 +81,49 @@ public class ImageUtils {
         return toBitmap(result);
     }
 
-    private static Mat circularShift(Mat mat, int x, int y) {
-        int w = mat.width();
-        int h = mat.height();
-        Mat result = Mat.zeros(w, h, CvType.CV_8UC1);
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
-                int i2 = (i + x) % w;
-                int j2 = (j + y) % h;
-                result.put(i2, j2, mat.get(i, j));
-            }
-        }
+    public static Mat circularShift(Mat mat, int x, int y) {
+        int w = mat.cols();
+        int h = mat.rows();
+        Mat result = Mat.zeros(h, w, CvType.CV_8UC4);
+
+        int shiftR = x % w;
+        int shiftD = y % h;
+        //java modulus gives negative results for negative numbers
+        if (shiftR < 0)
+            shiftR += w;
+        if (shiftD < 0)
+            shiftD += h;
+
+        /* extract 4 submatrices
+                      |---| shiftR
+             ______________
+            |         |   |
+            |    1    | 2 |
+            |_________|___|  ___ shiftD
+            |         |   |   |
+            |    3    | 4 |   |
+            |         |   |   |
+            |_________|___|  _|_
+         */
+        Mat shift1 = mat.submat(0, h-shiftD, 0, w-shiftR);
+        Mat shift2 = mat.submat(0, h-shiftD, w-shiftR, w);
+        Mat shift3 = mat.submat(h-shiftD, h, 0, w-shiftR);
+        Mat shift4 = mat.submat(h-shiftD, h, w-shiftR, w);
+
+        /* and rearrange
+             ______________
+            |   |         |
+            | 4 |    3    |
+            |   |         |
+            |___|_________|
+            |   |         |
+            | 2 |    1    |
+            |___|_________|
+         */
+        shift1.copyTo(new Mat(result, new Rect(shiftR, shiftD, w-shiftR, h-shiftD)));
+        shift2.copyTo(new Mat(result, new Rect(0, shiftD, shiftR, h-shiftD)));
+        shift3.copyTo(new Mat(result, new Rect(shiftR, 0, w-shiftR, shiftD)));
+        shift4.copyTo(new Mat(result, new Rect(0, 0, shiftR, shiftD)));
 
         return result;
     }
