@@ -46,8 +46,10 @@ public class ImageUtils {
         int width = first.getWidth();
         int height = first.getHeight();
 
-        Mat result = new Mat(height, width, CvType.CV_8UC4);
+        Mat result = new Mat(height, width, CvType.CV_64FC4);
+        Mat result8 = new Mat(height, width, CvType.CV_8UC4);
         Mat img;
+        Mat img64 = new Mat(height, width, CvType.CV_64FC4);
         Mat shifted;
         for (int i = 0; i < DATASET_SIZE; i++) {
             int x = i - DATASET_SIZE / 2;
@@ -57,6 +59,7 @@ public class ImageUtils {
                 //only use bright-field images
                 if (Math.sqrt(x*x + y*y) < DATASET_SIZE / 2.0) {
                     img = toMat(loadBitmap(dataset, i, j));
+                    img.convertTo(img64, CvType.CV_64FC4);
 
                     //compute and perform shift
 
@@ -68,7 +71,7 @@ public class ImageUtils {
                     int yShift = (int)(-yShiftDistance / DX + 0.5);
 
                     //TODO use frequency domain scalar for better shifting
-                    shifted = circularShift(img, xShift, yShift);
+                    shifted = circularShift(img64, xShift, yShift);
 
                     //add to result
                     Core.add(result, shifted, result);
@@ -76,15 +79,16 @@ public class ImageUtils {
             }
         }
 
-        Core.normalize(result, result);
+        Core.MinMaxLocResult minMaxLocResult = Core.minMaxLoc(result.reshape(1));
+        result.convertTo(result8, CvType.CV_8UC4, 255/minMaxLocResult.maxVal);
 
-        return toBitmap(result);
+        return toBitmap(result8);
     }
 
     public static Mat circularShift(Mat mat, int x, int y) {
         int w = mat.cols();
         int h = mat.rows();
-        Mat result = Mat.zeros(h, w, CvType.CV_8UC4);
+        Mat result = Mat.zeros(h, w, CvType.CV_64FC4);
 
         int shiftR = x % w;
         int shiftD = y % h;
