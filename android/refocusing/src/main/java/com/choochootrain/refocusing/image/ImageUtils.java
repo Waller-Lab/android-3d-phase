@@ -3,6 +3,8 @@ package com.choochootrain.refocusing.image;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.choochootrain.refocusing.tasks.ComputeFocusTask;
+
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -41,7 +43,7 @@ public class ImageUtils {
         return bmp;
     }
 
-    public static Bitmap computeFocus(String dataset, float z) {
+    public static Bitmap computeFocus(String dataset, float z, ComputeFocusTask task) {
         Bitmap first = loadBitmap(dataset, 0, 0);
         int width = first.getWidth();
         int height = first.getHeight();
@@ -76,6 +78,8 @@ public class ImageUtils {
                     //add to result
                     Core.add(result, shifted, result);
                 }
+
+                task.updateProgress((int)((i * DATASET_SIZE + j) / (DATASET_SIZE * DATASET_SIZE / 100.0)));
             }
         }
 

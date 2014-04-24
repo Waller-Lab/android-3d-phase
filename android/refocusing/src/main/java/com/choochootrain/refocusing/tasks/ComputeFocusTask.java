@@ -17,6 +17,7 @@ public class ComputeFocusTask extends AsyncTask<Float, Integer, Bitmap> {
         this.context = context;
         this.dataset = dataset;
         this.progressDialog = new ProgressDialog(context);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     }
 
     @Override
@@ -27,7 +28,12 @@ public class ComputeFocusTask extends AsyncTask<Float, Integer, Bitmap> {
 
     @Override
     protected Bitmap doInBackground(Float... params) {
-        return ImageUtils.computeFocus(dataset, params[0]);
+        //TODO refactor progress update
+        return ImageUtils.computeFocus(dataset, params[0], this);
+    }
+
+    public void updateProgress(int progress) {
+        onProgressUpdate(progress);
     }
 
     @Override
