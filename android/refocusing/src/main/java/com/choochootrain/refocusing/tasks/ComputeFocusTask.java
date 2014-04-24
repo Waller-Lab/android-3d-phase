@@ -1,52 +1,79 @@
 package com.choochootrain.refocusing.tasks;
 
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.choochootrain.refocusing.datasets.Dataset;
 import com.choochootrain.refocusing.image.ImageUtils;
 import com.choochootrain.refocusing.MainActivity;
 
-public class ComputeFocusTask extends AsyncTask<Float, Integer, Bitmap> {
-    private MainActivity context;
-    private String dataset;
-    private ProgressDialog progressDialog;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
 
-    public ComputeFocusTask(MainActivity context, String dataset) {
-        this.context = context;
-        this.dataset = dataset;
-        this.progressDialog = new ProgressDialog(context);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-    }
+public class ComputeFocusTask extends ImageProgressTask {
+    private MainActivity mainActivity;
 
-    @Override
-    protected void onPreExecute() {
-        progressDialog.setMessage("Assembling refocused image...");
-        progressDialog.show();
+    public ComputeFocusTask(MainActivity mainActivity) {
+        super(mainActivity);
+        this.mainActivity = mainActivity;
+        this.progressDialog.setMessage("Assembling refocused image...");
     }
 
     @Override
     protected Bitmap doInBackground(Float... params) {
-        //TODO refactor progress update
-        return ImageUtils.computeFocus(dataset, params[0], this);
-    }
+        float z = params[0];
+        Bitmap first = Dataset.loadBitmap(0, 0);
+        int width = first.getWidth();
+        int height = first.getHeight();
 
-    public void updateProgress(int progress) {
-        onProgressUpdate(progress);
-    }
+        Mat result = new Mat(height, width, CvType.CV_64FC4);
+        Mat result8 = new Mat(height, width, CvType.CV_8UC4);
+        Mat img;
+        Mat img64 = new Mat(height, width, CvType.CV_64FC4);
+        Mat shifted;
+        for (int i = 0; i < Dataset.SIZE; i++) {
+            int x = i - Dataset.SIZE / 2;
+            for (int j = 0; j < Dataset.SIZE; j++) {
+                int y = j - Dataset.SIZE / 2;
 
-    @Override
-    protected void onProgressUpdate(Integer... progress) {
-       progressDialog.setProgress(progress[0]);
+                //only use bright-field images
+                if (Math.sqrt(x*x + y*y) < Dataset.SIZE / 2.0) {
+                    img = ImageUtils.toMat(Dataset.loadBitmap(i, j));
+                    img.convertTo(img64, CvType.CV_64FC4);
+
+                    //compute and perform shift
+
+                    int xDistance = x * Dataset.LED_DISTANCE;
+                    int yDistance = y * Dataset.LED_DISTANCE;
+                    double xShiftDistance = -z * xDistance / Dataset.F_CONDENSER;
+                    double yShiftDistance = -z * yDistance / Dataset.F_CONDENSER;
+                    int xShift = (int)(-xShiftDistance / Dataset.DX + 0.5);
+                    int yShift = (int)(-yShiftDistance / Dataset.DX + 0.5);
+
+                    //TODO use frequency domain scalar for better shifting
+                    shifted = ImageUtils.circularShift(img64, xShift, yShift);
+
+                    //add to result
+                    Core.add(result, shifted, result);
+                }
+
+                float progress = ((float)(i * Dataset.SIZE + j)) / (Dataset.SIZE * Dataset.SIZE);
+                onProgressUpdate((int)(progress * 100));
+            }
+        }
+
+        Core.MinMaxLocResult minMaxLocResult = Core.minMaxLoc(result.reshape(1));
+        result.convertTo(result8, CvType.CV_8UC4, 255/minMaxLocResult.maxVal);
+
+        return ImageUtils.toBitmap(result8);
     }
 
     @Override
     protected void onPostExecute(Bitmap result) {
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
+        super.onPostExecute(result);
 
         Toast.makeText(context, "Refocused image computed", Toast.LENGTH_LONG).show();
-        context.setImage(result);
+        mainActivity.setImage(result);
     }
 }

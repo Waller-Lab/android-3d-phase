@@ -13,7 +13,6 @@ import com.choochootrain.refocusing.tasks.ComputeFocusTask;
 
 public class MainActivity extends OpenCVActivity {
     private static final String TAG = "MainActivity";
-    private static final String DATASET = "10-1-13";
 
     private EditText focusDepth;
     private Button computeButton;
@@ -32,7 +31,7 @@ public class MainActivity extends OpenCVActivity {
             @Override
             public void onClick(View v) {
                 float focus = Float.parseFloat(focusDepth.getText().toString());
-                new ComputeFocusTask(MainActivity.this, DATASET).execute(focus);
+                new ComputeFocusTask(MainActivity.this).execute(focus);
             }
         });
 
