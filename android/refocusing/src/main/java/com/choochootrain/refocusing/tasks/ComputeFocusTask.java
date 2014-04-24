@@ -1,28 +1,39 @@
 package com.choochootrain.refocusing.tasks;
 
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.widget.Toast;
 
 import com.choochootrain.refocusing.datasets.Dataset;
 import com.choochootrain.refocusing.image.ImageUtils;
-import com.choochootrain.refocusing.MainActivity;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
 public class ComputeFocusTask extends ImageProgressTask {
-    private MainActivity mainActivity;
-
-    public ComputeFocusTask(MainActivity mainActivity) {
-        super(mainActivity);
-        this.mainActivity = mainActivity;
-        this.progressDialog.setMessage("Assembling refocused image...");
+    public ComputeFocusTask(Context context) {
+        super(context);
+        this.progressDialog.setMessage("Assembling refocused images...");
     }
 
     @Override
-    protected Bitmap doInBackground(Float... params) {
-        float z = params[0];
+    protected Void doInBackground(Float... params) {
+        float zMin = params[0];
+        float zInc = params[1];
+        float zMax = params[2];
+
+        for (float z = zMin; z <= zMax; z += zInc) {
+            float progress = (z - zMin) / (zMax - zMin);
+            onProgressUpdate((int)(progress * 100), -1);
+
+            Bitmap result = computeFocus(z);
+            //TODO save image
+        }
+
+        return null;
+    }
+
+    private Bitmap computeFocus(float z) {
         Bitmap first = Dataset.loadBitmap(0, 0);
         int width = first.getWidth();
         int height = first.getHeight();
@@ -59,7 +70,7 @@ public class ComputeFocusTask extends ImageProgressTask {
                 }
 
                 float progress = ((float)(i * Dataset.SIZE + j)) / (Dataset.SIZE * Dataset.SIZE);
-                onProgressUpdate((int)(progress * 100));
+                onProgressUpdate(-1, (int)(progress * 100));
             }
         }
 
@@ -70,10 +81,7 @@ public class ComputeFocusTask extends ImageProgressTask {
     }
 
     @Override
-    protected void onPostExecute(Bitmap result) {
+    protected void onPostExecute(Void result) {
         super.onPostExecute(result);
-
-        Toast.makeText(context, "Refocused image computed", Toast.LENGTH_LONG).show();
-        mainActivity.setImage(result);
     }
 }

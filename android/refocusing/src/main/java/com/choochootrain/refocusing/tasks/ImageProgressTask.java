@@ -2,10 +2,9 @@ package com.choochootrain.refocusing.tasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 
-public abstract class ImageProgressTask extends AsyncTask<Float, Integer, Bitmap> {
+public abstract class ImageProgressTask extends AsyncTask<Float, Integer, Void> {
     protected Context context;
     protected ProgressDialog progressDialog;
 
@@ -16,19 +15,22 @@ public abstract class ImageProgressTask extends AsyncTask<Float, Integer, Bitmap
     }
 
     @Override
+    protected void onProgressUpdate(Integer... progress){
+        if (progress.length > 1) {
+            if (progress[0] >= 0)
+                progressDialog.setProgress(progress[0]);
+            if (progress[1] >= 0)
+                progressDialog.setSecondaryProgress(progress[1]);
+        }
+    }
+
+    @Override
     protected void onPreExecute() {
         progressDialog.show();
     }
 
     @Override
-    protected void onProgressUpdate(Integer... progress) {
-        progressDialog.setProgress(progress[0]);
-        if (progress.length > 1)
-            progressDialog.setSecondaryProgress(progress[1]);
-    }
-
-    @Override
-    protected void onPostExecute(Bitmap result) {
+    protected void onPostExecute(Void result) {
         if (progressDialog.isShowing())
             progressDialog.dismiss();
     }

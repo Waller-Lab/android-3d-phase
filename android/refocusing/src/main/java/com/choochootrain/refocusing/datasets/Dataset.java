@@ -14,6 +14,9 @@ public class Dataset {
     public static final double DX0 = 0.0053;
     public static final double DX = DX0/M; //spatial resolution
 
+    public static final float MAX_DEPTH = 0.1f;
+    public static final float DEPTH_INC = 0.01f;
+
     private static final String DATASET_PATH = "/sdcard/datasets/";
     private static final String DATASET = "10-1-13";
 
