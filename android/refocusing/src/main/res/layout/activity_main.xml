@@ -12,6 +12,11 @@
         android:id="@+id/computeButton"
         android:text="Compute" />
 
+    <SeekBar
+        android:id="@+id/focusDepth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

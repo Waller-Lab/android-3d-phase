@@ -1,8 +1,5 @@
 package com.choochootrain.refocusing.datasets;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 // Constants for current image dataset
 public class Dataset {
     public static final int SIZE = 7;
