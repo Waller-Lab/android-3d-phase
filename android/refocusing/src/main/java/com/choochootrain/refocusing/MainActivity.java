@@ -15,7 +15,6 @@ import com.choochootrain.refocusing.tasks.ComputeFocusTask;
 public class MainActivity extends OpenCVActivity {
     private static final String TAG = "MainActivity";
 
-    private EditText focusDepth;
     private Button computeButton;
     private ImageView imageView;
 

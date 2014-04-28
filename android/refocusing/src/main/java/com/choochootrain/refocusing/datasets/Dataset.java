@@ -17,11 +17,14 @@ public class Dataset {
     public static final float MAX_DEPTH = 0.1f;
     public static final float DEPTH_INC = 0.01f;
 
-    private static final String DATASET_PATH = "/sdcard/datasets/";
-    private static final String DATASET = "10-1-13";
+    public static final String DATASET_PATH = "/sdcard/datasets/";
+    public static final String DATASET = "10-1-13";
 
-    public static Bitmap loadBitmap(int row, int col) {
-        String path = DATASET_PATH + DATASET + "/image" + String.format("%d%d", row, col) + ".bmp";
-        return BitmapFactory.decodeFile(path);
+    public static String getRawImagePath(int row, int col) {
+        return DATASET_PATH + DATASET + "/image" + String.format("%d%d", row, col) + ".bmp";
+    }
+
+    public static String getResultImagePath(float depth) {
+        return DATASET_PATH + DATASET + "/result" + String.format("%f", depth) + ".bmp";
     }
 }

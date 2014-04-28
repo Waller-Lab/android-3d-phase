@@ -2,6 +2,7 @@ package com.choochootrain.refocusing.tasks;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.choochootrain.refocusing.datasets.Dataset;
 import com.choochootrain.refocusing.image.ImageUtils;
@@ -9,6 +10,10 @@ import com.choochootrain.refocusing.image.ImageUtils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 public class ComputeFocusTask extends ImageProgressTask {
     public ComputeFocusTask(Context context) {
@@ -27,14 +32,20 @@ public class ComputeFocusTask extends ImageProgressTask {
             onProgressUpdate((int)(progress * 100), -1);
 
             Bitmap result = computeFocus(z);
-            //TODO save image
+            File resultBmp = new File(Dataset.getResultImagePath(z));
+            try {
+                FileOutputStream fos = new FileOutputStream(resultBmp);
+                result.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            } catch (FileNotFoundException e) {
+                return null;
+            }
         }
 
         return null;
     }
 
     private Bitmap computeFocus(float z) {
-        Bitmap first = Dataset.loadBitmap(0, 0);
+        Bitmap first = BitmapFactory.decodeFile(Dataset.getRawImagePath(0, 0));
         int width = first.getWidth();
         int height = first.getHeight();
 
@@ -50,7 +61,7 @@ public class ComputeFocusTask extends ImageProgressTask {
 
                 //only use bright-field images
                 if (Math.sqrt(x*x + y*y) < Dataset.SIZE / 2.0) {
-                    img = ImageUtils.toMat(Dataset.loadBitmap(i, j));
+                    img = ImageUtils.toMat(BitmapFactory.decodeFile(Dataset.getRawImagePath(i, j)));
                     img.convertTo(img64, CvType.CV_64FC4);
 
                     //compute and perform shift
