@@ -106,6 +106,7 @@ public class ZoomableImageView extends View {
             canvas.save();
             canvas.translate(xPos, yPos);
             canvas.scale(scaleFactor, scaleFactor);
+            canvas.translate(-image.getIntrinsicWidth()/2, -image.getIntrinsicHeight()/2);
             image.draw(canvas);
             canvas.restore();
         }
