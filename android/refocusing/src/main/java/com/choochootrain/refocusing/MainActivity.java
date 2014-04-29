@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.choochootrain.refocusing.datasets.Dataset;
 import com.choochootrain.refocusing.opencv.OpenCVActivity;
 import com.choochootrain.refocusing.tasks.ComputeFocusTask;
+import com.choochootrain.refocusing.view.ZoomableImageView;
 
 public class MainActivity extends OpenCVActivity {
     private static final String TAG = "MainActivity";
@@ -22,7 +23,7 @@ public class MainActivity extends OpenCVActivity {
 
     private Button computeButton;
     private SeekBar focusDepth;
-    private ImageView imageView;
+    private ZoomableImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +50,7 @@ public class MainActivity extends OpenCVActivity {
                 String file = Dataset.getResultImagePath(z);
                 Bitmap bmp = BitmapFactory.decodeFile(file);
                 if (bmp != null)
-                    imageView.setImageBitmap(bmp);
+                    imageView.setImage(bmp);
             }
 
             @Override
@@ -63,7 +64,7 @@ public class MainActivity extends OpenCVActivity {
             }
         });
 
-        imageView = (ImageView) findViewById(R.id.imageView);
+        imageView = (ZoomableImageView) findViewById(R.id.imageView);
     }
 
     @Override
