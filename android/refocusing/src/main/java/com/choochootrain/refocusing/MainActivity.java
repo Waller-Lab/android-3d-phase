@@ -1,5 +1,7 @@
 package com.choochootrain.refocusing;
 
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -69,5 +71,11 @@ public class MainActivity extends OpenCVActivity {
         computeButton.setEnabled(true);
         focusDepth.setEnabled(true);
         Toast.makeText(this, "OpenCV initialized successfully", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 }
