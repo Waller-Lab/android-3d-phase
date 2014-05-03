@@ -90,9 +90,4 @@ public class ComputeFocusTask extends ImageProgressTask {
 
         return ImageUtils.toBitmap(result8);
     }
-
-    @Override
-    protected void onPostExecute(Void result) {
-        super.onPostExecute(result);
-    }
 }
