@@ -5,6 +5,8 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -12,6 +14,8 @@ import android.widget.Toast;
 
 import com.choochootrain.refocusing.datasets.Dataset;
 import com.choochootrain.refocusing.opencv.OpenCVActivity;
+import com.choochootrain.refocusing.tasks.ComputeDPCTask;
+import com.choochootrain.refocusing.tasks.ComputeDarkfieldTask;
 import com.choochootrain.refocusing.tasks.ComputeFocusTask;
 import com.choochootrain.refocusing.view.ZoomableImageView;
 
@@ -77,5 +81,29 @@ public class MainActivity extends OpenCVActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch(id) {
+            case R.id.refocus:
+                new ComputeFocusTask(MainActivity.this).execute(-Dataset.MAX_DEPTH, Dataset.DEPTH_INC, Dataset.MAX_DEPTH);
+                break;
+            case R.id.darkfield:
+                new ComputeDarkfieldTask(MainActivity.this).execute();
+                break;
+            case R.id.phase_contrast:
+                new ComputeDPCTask(MainActivity.this).execute(-Dataset.MAX_DEPTH, Dataset.DEPTH_INC, Dataset.MAX_DEPTH);
+                break;
+        }
+
+        return true;
     }
 }
