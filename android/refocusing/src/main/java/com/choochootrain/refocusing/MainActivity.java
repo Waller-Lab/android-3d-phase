@@ -30,6 +30,8 @@ public class MainActivity extends OpenCVActivity {
     private SeekBar focusDepth;
     private ZoomableImageView imageView;
 
+    private String imageType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +39,8 @@ public class MainActivity extends OpenCVActivity {
 
         imageInfo = (TextView) findViewById(R.id.image_info);
         imageInfo.setText("Refocused at 0.0 " + Dataset.UNITS);
+        //TODO refactor image view handling
+        imageType = "result";
 
         computeButton = (Button) findViewById(R.id.computeButton);
         computeButton.setEnabled(false);
@@ -55,7 +59,7 @@ public class MainActivity extends OpenCVActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 float z = (progress - SEEK_SIZE/2) * SEEK_RESOLUTION;
-                String file = Dataset.getResultImagePath(z);
+                String file = Dataset.getResultImagePath(imageType, z);
                 Bitmap bmp = BitmapFactory.decodeFile(file);
                 if (bmp != null) {
                     imageView.setImage(bmp);
@@ -102,12 +106,14 @@ public class MainActivity extends OpenCVActivity {
         switch(id) {
             case R.id.refocus:
                 new ComputeFocusTask(MainActivity.this).execute(-Dataset.MAX_DEPTH, Dataset.DEPTH_INC, Dataset.MAX_DEPTH);
+                imageType = "result";
                 break;
             case R.id.darkfield:
                 new ComputeDarkfieldTask(MainActivity.this).execute();
                 break;
             case R.id.phase_contrast:
                 new ComputeDPCTask(MainActivity.this).execute(-Dataset.MAX_DEPTH, Dataset.DEPTH_INC, Dataset.MAX_DEPTH);
+                imageType = "dpc";
                 break;
         }
 

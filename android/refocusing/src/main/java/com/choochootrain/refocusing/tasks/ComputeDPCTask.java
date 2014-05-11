@@ -32,7 +32,7 @@ public class ComputeDPCTask extends ImageProgressTask {
             onProgressUpdate((int)(progress * 100), -1);
 
             Bitmap result = computeDPC(z);
-            File resultBmp = new File(Dataset.getResultImagePath(z));
+            File resultBmp = new File(Dataset.getResultImagePath("dpc", z));
             try {
                 FileOutputStream fos = new FileOutputStream(resultBmp);
                 result.compress(Bitmap.CompressFormat.PNG, 100, fos);

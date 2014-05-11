@@ -22,8 +22,8 @@ public class Dataset {
         return DATASET_PATH + DATASET + "/image" + String.format("%d%d", row, col) + ".bmp";
     }
 
-    public static String getResultImagePath(float depth) {
-        return DATASET_PATH + DATASET + "/result" + String.format("%d", (int)(depth*100)) + ".png";
+    public static String getResultImagePath(String name, float depth) {
+        return DATASET_PATH + DATASET + "/" + name + String.format("%d", (int)(depth*100)) + ".png";
     }
 
     public static String getResultImagePath(String name) {
