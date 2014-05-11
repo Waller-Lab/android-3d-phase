@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.choochootrain.refocusing.datasets.Dataset;
@@ -24,6 +25,7 @@ public class MainActivity extends OpenCVActivity {
     private static final int SEEK_SIZE = (int)(Dataset.MAX_DEPTH * 2 / Dataset.DEPTH_INC);
     private static final float SEEK_RESOLUTION = Dataset.DEPTH_INC;
 
+    private TextView imageInfo;
     private Button computeButton;
     private SeekBar focusDepth;
     private ZoomableImageView imageView;
@@ -32,6 +34,9 @@ public class MainActivity extends OpenCVActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        imageInfo = (TextView) findViewById(R.id.image_info);
+        imageInfo.setText("Refocused at 0.0 " + Dataset.UNITS);
 
         computeButton = (Button) findViewById(R.id.computeButton);
         computeButton.setEnabled(false);
@@ -52,8 +57,10 @@ public class MainActivity extends OpenCVActivity {
                 float z = (progress - SEEK_SIZE/2) * SEEK_RESOLUTION;
                 String file = Dataset.getResultImagePath(z);
                 Bitmap bmp = BitmapFactory.decodeFile(file);
-                if (bmp != null)
+                if (bmp != null) {
                     imageView.setImage(bmp);
+                    imageInfo.setText("Refocused at " + z + " " + Dataset.UNITS);
+                }
             }
 
             @Override

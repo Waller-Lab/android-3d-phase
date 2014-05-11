@@ -2,6 +2,7 @@ package com.choochootrain.refocusing.datasets;
 
 // Constants for current image dataset
 public class Dataset {
+    public static final String UNITS = "mm";
     public static final int SIZE = 7;
     public static final int LED_DISTANCE = 4;
     public static final int F_CONDENSER = 60; //mm
