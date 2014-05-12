@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -41,7 +40,7 @@ public class MainActivity extends OpenCVActivity {
         viewRefocus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.this.startViewActivity("refocus");
+                MainActivity.this.startViewActivity("refocus", true);
             }
         });
 
@@ -56,7 +55,7 @@ public class MainActivity extends OpenCVActivity {
         viewDPC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.this.startViewActivity("dpc");
+                MainActivity.this.startViewActivity("dpc", true);
             }
         });
 
@@ -71,7 +70,7 @@ public class MainActivity extends OpenCVActivity {
         viewDarkfield.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.this.startViewActivity("darkfield");
+                MainActivity.this.startViewActivity("darkfield", false);
             }
         });
     }
@@ -82,9 +81,10 @@ public class MainActivity extends OpenCVActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
-    protected void startViewActivity(String type) {
-        //TODO actually handle cases
+    protected void startViewActivity(String type, boolean useSlider) {
         Intent intent = new Intent(this, ZoomableImageActivity.class);
+        intent.putExtra("type", type);
+        intent.putExtra("useSlider", useSlider);
         startActivity(intent);
     }
 }

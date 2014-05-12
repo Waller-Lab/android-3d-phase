@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.choochootrain.refocusing.R;
 import com.choochootrain.refocusing.datasets.Dataset;
@@ -22,43 +21,51 @@ public class ZoomableImageActivity extends OpenCVActivity {
     private ZoomableImageView imageView;
 
     private String imageType;
+    private boolean useSlider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.slider_image_view);
+
+        imageType = getIntent().getExtras().getString("type");
+        useSlider = getIntent().getExtras().getBoolean("useSlider", true);
+
+        if (useSlider)
+            setContentView(R.layout.slider_image_view);
+        else
+            setContentView(R.layout.image_view);
 
         imageInfo = (TextView) findViewById(R.id.image_info);
-        imageInfo.setText("Refocused at 0.0 " + Dataset.UNITS);
-        //TODO refactor image view handling
-        imageType = "result";
+        imageInfo.setText(imageType + " at 0.0 " + Dataset.UNITS);
 
-        //TODO handle images with no slider
-        focusDepth = (SeekBar) findViewById(R.id.focusDepth);
-        focusDepth.setEnabled(false);
-        focusDepth.setMax(SEEK_SIZE);
-        focusDepth.setProgress(SEEK_SIZE/2);
-        focusDepth.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float z = (progress - SEEK_SIZE/2) * SEEK_RESOLUTION;
-                String file = Dataset.getResultImagePath(imageType, z);
-                Bitmap bmp = BitmapFactory.decodeFile(file);
-                if (bmp != null) {
-                    imageView.setImage(bmp);
+        if (useSlider) {
+            focusDepth = (SeekBar) findViewById(R.id.focusDepth);
+            focusDepth.setEnabled(false);
+            focusDepth.setMax(SEEK_SIZE);
+            focusDepth.setProgress(SEEK_SIZE / 2);
+            focusDepth.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    float z = (progress - SEEK_SIZE / 2) * SEEK_RESOLUTION;
+                    String file = Dataset.getResultImagePath(imageType, z);
+                    Bitmap bmp = BitmapFactory.decodeFile(file);
+                    if (bmp != null) {
+                        imageView.setImage(bmp);
+                        imageInfo.setText(imageType + " at " + z + " " + Dataset.UNITS);
+                    }
                 }
-            }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                //do nothing
-            }
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    //do nothing
+                }
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                //do nothing
-            }
-        });
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    //do nothing
+                }
+            });
+        }
 
         imageView = (ZoomableImageView) findViewById(R.id.imageView);
     }
@@ -66,6 +73,7 @@ public class ZoomableImageActivity extends OpenCVActivity {
     @Override
     public void postOpenCVLoad() {
         super.postOpenCVLoad();
-        focusDepth.setEnabled(true);
+        if (useSlider)
+            focusDepth.setEnabled(true);
     }
 }
