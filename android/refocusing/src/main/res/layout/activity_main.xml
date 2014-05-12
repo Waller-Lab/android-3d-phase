@@ -6,25 +6,40 @@
     android:keepScreenOn="true"
     tools:context="com.choochootrain.refocusing.MainActivity">
 
-    <TextView
-        android:id="@+id/image_info"
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:id="@+id/computeRefocus"
+        android:text="Compute refocus" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/computeButton"
-        android:text="Compute" />
+        android:id="@+id/viewRefocus"
+        android:text="View refocus" />
 
-    <SeekBar
-        android:id="@+id/focusDepth"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <com.choochootrain.refocusing.view.ZoomableImageView
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView" />
+        android:id="@+id/computeDPC"
+        android:text="Compute DPC" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/viewDPC"
+        android:text="View DPC" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/computeDarkfield"
+        android:text="Compute darkfield" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/viewDarkfield"
+        android:text="View darkfield" />
 
 </LinearLayout>

@@ -2,6 +2,7 @@ package com.choochootrain.refocusing.opencv;
 
 import android.app.Activity;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -29,6 +30,7 @@ public class OpenCVActivity extends Activity {
 
     // override this to use opencv dependent libraries
     public void postOpenCVLoad() {
+        Toast.makeText(this, "OpenCV initialized successfully", Toast.LENGTH_SHORT).show();
         return;
     }
 
