@@ -15,8 +15,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
-public class ComputeFocusTask extends ImageProgressTask {
-    public ComputeFocusTask(Context context) {
+public class ComputeRefocusTask extends ImageProgressTask {
+    public ComputeRefocusTask(Context context) {
         super(context);
         this.progressDialog.setMessage("Assembling refocused images...");
     }
@@ -32,7 +32,7 @@ public class ComputeFocusTask extends ImageProgressTask {
             onProgressUpdate((int)(progress * 100), -1);
 
             Bitmap result = computeFocus(z);
-            File resultBmp = new File(Dataset.getResultImagePath("result", z));
+            File resultBmp = new File(Dataset.getResultImagePath("refocus", z));
             try {
                 FileOutputStream fos = new FileOutputStream(resultBmp);
                 result.compress(Bitmap.CompressFormat.PNG, 100, fos);

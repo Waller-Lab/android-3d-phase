@@ -12,7 +12,7 @@ import com.choochootrain.refocusing.image.ZoomableImageActivity;
 import com.choochootrain.refocusing.opencv.OpenCVActivity;
 import com.choochootrain.refocusing.tasks.ComputeDPCTask;
 import com.choochootrain.refocusing.tasks.ComputeDarkfieldTask;
-import com.choochootrain.refocusing.tasks.ComputeFocusTask;
+import com.choochootrain.refocusing.tasks.ComputeRefocusTask;
 
 public class MainActivity extends OpenCVActivity {
     private static final String TAG = "MainActivity";
@@ -33,7 +33,7 @@ public class MainActivity extends OpenCVActivity {
         computeRefocus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ComputeFocusTask(MainActivity.this).execute(-Dataset.MAX_DEPTH, Dataset.DEPTH_INC, Dataset.MAX_DEPTH);
+                new ComputeRefocusTask(MainActivity.this).execute(-Dataset.MAX_DEPTH, Dataset.DEPTH_INC, Dataset.MAX_DEPTH);
             }
         });
         viewRefocus = (Button) findViewById(R.id.viewRefocus);
