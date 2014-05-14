@@ -7,7 +7,6 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
-//TODO cache images
 public class ImageUtils {
     private static final String TAG = "ImageUtils";
 
@@ -23,7 +22,6 @@ public class ImageUtils {
         return bmp;
     }
 
-    //TODO fourier implementation
     public static Mat circularShift(Mat mat, int x, int y) {
         int w = mat.cols();
         int h = mat.rows();

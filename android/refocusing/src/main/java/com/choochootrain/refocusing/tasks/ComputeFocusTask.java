@@ -73,7 +73,6 @@ public class ComputeFocusTask extends ImageProgressTask {
                     int xShift = (int)(-xShiftDistance / Dataset.DX + 0.5);
                     int yShift = (int)(-yShiftDistance / Dataset.DX + 0.5);
 
-                    //TODO use frequency domain scalar for better shifting
                     shifted = ImageUtils.circularShift(img64, xShift, yShift);
 
                     //add to result
