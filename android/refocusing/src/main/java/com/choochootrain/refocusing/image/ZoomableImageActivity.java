@@ -36,7 +36,13 @@ public class ZoomableImageActivity extends OpenCVActivity {
             setContentView(R.layout.image_view);
 
         imageInfo = (TextView) findViewById(R.id.image_info);
-        imageInfo.setText(imageType + " at 0.0 " + Dataset.UNITS);
+
+        if (useSlider)
+            imageInfo.setText(imageType + " at 0.0 " + Dataset.UNITS);
+        else
+            imageInfo.setText(imageType);
+
+        imageView = (ZoomableImageView) findViewById(R.id.imageView);
 
         if (useSlider) {
             focusDepth = (SeekBar) findViewById(R.id.focusDepth);
@@ -65,9 +71,10 @@ public class ZoomableImageActivity extends OpenCVActivity {
                     //do nothing
                 }
             });
+        } else {
+            Bitmap bmp = BitmapFactory.decodeFile(Dataset.getResultImagePath(imageType));
+            imageView.setImage(bmp);
         }
-
-        imageView = (ZoomableImageView) findViewById(R.id.imageView);
     }
 
     @Override
