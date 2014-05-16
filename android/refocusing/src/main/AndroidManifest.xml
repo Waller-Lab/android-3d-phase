@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo" >
         <activity
-            android:name="com.choochootrain.refocusing.MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -24,7 +24,7 @@
         </activity>
 
         <activity
-            android:name="com.choochootrain.refocusing.image.ZoomableImageActivity"
+            android:name=".activity.ZoomableImageActivity"
             android:screenOrientation="portrait" >
         </activity>
     </application>

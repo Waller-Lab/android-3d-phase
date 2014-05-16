@@ -1,4 +1,4 @@
-package com.choochootrain.refocusing;
+package com.choochootrain.refocusing.activity;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -7,9 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.choochootrain.refocusing.R;
 import com.choochootrain.refocusing.datasets.Dataset;
-import com.choochootrain.refocusing.image.ZoomableImageActivity;
-import com.choochootrain.refocusing.opencv.OpenCVActivity;
 import com.choochootrain.refocusing.tasks.ComputeDPCTask;
 import com.choochootrain.refocusing.tasks.ComputeDarkfieldTask;
 import com.choochootrain.refocusing.tasks.ComputeRefocusTask;

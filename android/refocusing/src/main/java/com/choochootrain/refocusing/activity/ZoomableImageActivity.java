@@ -1,4 +1,4 @@
-package com.choochootrain.refocusing.image;
+package com.choochootrain.refocusing.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.choochootrain.refocusing.R;
 import com.choochootrain.refocusing.datasets.Dataset;
-import com.choochootrain.refocusing.opencv.OpenCVActivity;
 import com.choochootrain.refocusing.view.ZoomableImageView;
 
 public class ZoomableImageActivity extends OpenCVActivity {

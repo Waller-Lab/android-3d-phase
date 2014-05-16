@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.choochootrain.refocusing.datasets.Dataset;
-import com.choochootrain.refocusing.image.ImageUtils;
+import com.choochootrain.refocusing.utils.ImageUtils;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;

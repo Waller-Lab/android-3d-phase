@@ -1,4 +1,4 @@
-package com.choochootrain.refocusing.image;
+package com.choochootrain.refocusing.utils;
 
 import android.graphics.Bitmap;
 

@@ -1,4 +1,4 @@
-package com.choochootrain.refocusing.opencv;
+package com.choochootrain.refocusing.activity;
 
 import android.app.Activity;
 import android.util.Log;
