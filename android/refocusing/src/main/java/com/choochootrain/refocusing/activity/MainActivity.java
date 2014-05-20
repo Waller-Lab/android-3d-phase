@@ -74,12 +74,14 @@ public class MainActivity extends OpenCVActivity {
         });
     }
 
+    //ensure app is in portrait orientation
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
+    //fire intent to start activity with proper configuration for type
     protected void startViewActivity(String type, boolean useSlider) {
         Intent intent = new Intent(this, ZoomableImageActivity.class);
         intent.putExtra("type", type);
