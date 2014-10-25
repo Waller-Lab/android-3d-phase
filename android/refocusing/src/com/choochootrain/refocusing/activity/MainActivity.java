@@ -2,9 +2,6 @@ package com.choochootrain.refocusing.activity;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FilenameFilter;
-
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -12,16 +9,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.choochootrain.refocusing.R;
 import com.choochootrain.refocusing.datasets.Dataset;
-import com.choochootrain.refocusing.tasks.ComputeDPCTask;
-import com.choochootrain.refocusing.tasks.ComputeDarkfieldTask;
 import com.choochootrain.refocusing.tasks.ComputeRefocusTask;
-import com.choochootrain.refocusing.utils.ImageUtils;
 
 
 public class MainActivity extends OpenCVActivity {
@@ -64,7 +59,7 @@ public class MainActivity extends OpenCVActivity {
                 MainActivity.this.startViewActivity("refocus", true, mDataset);
             }
         });
-
+        /*
         computeDPC = (Button) findViewById(R.id.computeDPC);
         computeDPC.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,14 +67,15 @@ public class MainActivity extends OpenCVActivity {
                 new ComputeDPCTask(MainActivity.this).execute(mDataset);
             }
         });
+        */
         viewDPC = (Button) findViewById(R.id.viewDPC);
         viewDPC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.this.startViewActivity("dpc", true, mDataset);
+                MainActivity.this.startViewActivity("dpc_left", true, mDataset);
             }
         });
-
+        /*
         computeDarkfield = (Button) findViewById(R.id.computeDarkfield);
         computeDarkfield.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +90,7 @@ public class MainActivity extends OpenCVActivity {
                 MainActivity.this.startViewActivity("darkfield", false, mDataset);
             }
         });
+        */
     }
 
     //ensure app is in portrait orientation
@@ -106,13 +103,14 @@ public class MainActivity extends OpenCVActivity {
     //fire intent to start activity with proper configuration for type
     protected void startViewActivity(String type, boolean useSlider, Dataset mDataset) {
         Intent intent = new Intent(this, ZoomableImageActivity.class);
-        //intent.putExtra("type", mDataset);
+        intent.putExtra("dataset", mDataset);
         intent.putExtra("type", type);
         intent.putExtra("useSlider", useSlider);
         startActivity(intent);
     }
     
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) return;
         if(requestCode == ACTIVITY_CHOOSE_FILE)
         {
@@ -168,10 +166,10 @@ public class MainActivity extends OpenCVActivity {
     }
 
 	public String getRealPathFromURI(Uri contentUri) {
-	    String [] proj      = {MediaStore.Images.Media.DATA};
+	    String [] proj      = {MediaColumns.DATA};
 	    Cursor cursor       = getContentResolver().query( contentUri, proj, null, null,null); 
 	    if (cursor == null) return null; 
-	    int column_index    = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+	    int column_index    = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
 	    cursor.moveToFirst();
 	    return cursor.getString(column_index);
 }

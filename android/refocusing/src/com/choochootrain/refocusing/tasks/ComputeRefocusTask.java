@@ -13,6 +13,8 @@ import com.choochootrain.refocusing.utils.ImageUtils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -33,13 +35,18 @@ public class ComputeRefocusTask extends ImageProgressTask{
     double tanv_lit[];
     byte[][] fileByteList;
     
+    
+    
     @Override
     protected Void doInBackground(Dataset... params) {
     	mDataset = params[0];
+    	
+
+        
         float zMin = mDataset.ZMIN;
         float zInc = mDataset.ZINC;
         float zMax = mDataset.ZMAX;
-        String outDir = mDataset.DATASET_PATH+"/Refocused/";
+        String outDir = mDataset.DATASET_PATH+"/Refocused2/";
         File outFile = new File(outDir);
         outFile.mkdirs();
         
@@ -62,9 +69,9 @@ public class ComputeRefocusTask extends ImageProgressTask{
         // Convert the coordinates to floats
         for (int i=0; i<mDataset.domeCoordinates.length; i++)
         {
-        	domeCoordinates[i][0] = (double)mDataset.domeCoordinates[i][0];
-        	domeCoordinates[i][1] = (double)mDataset.domeCoordinates[i][1];
-        	domeCoordinates[i][2] = (double)mDataset.domeCoordinates[i][2];
+        	domeCoordinates[i][0] = mDataset.domeCoordinates[i][0];
+        	domeCoordinates[i][1] = mDataset.domeCoordinates[i][1];
+        	domeCoordinates[i][2] = mDataset.domeCoordinates[i][2];
         }
         
         rotatedCoordinates = ImageUtils.multiplyArray(domeCoordinates, rotationTransform);
@@ -83,6 +90,7 @@ public class ComputeRefocusTask extends ImageProgressTask{
         fileByteList = new byte[mDataset.fileCount][(int) mDataset.fileList[0].length()*2];
         
         for (int idx = 0; idx < mDataset.fileCount; idx++) {
+        	
         	File file = mDataset.fileList[idx];
     	    int size = (int) file.length();
     	    byte[] bytes = new byte[size];
@@ -120,13 +128,13 @@ public class ComputeRefocusTask extends ImageProgressTask{
                 return null;
             }
             try {
-                FileOutputStream fos = new FileOutputStream(dpc_tb_Bmp);
+                FileOutputStream fos = new FileOutputStream(dpc_lr_Bmp);
                 results[1].compress(Bitmap.CompressFormat.PNG, 100, fos);
             } catch (FileNotFoundException e) {
                 return null;
             }
             try {
-                FileOutputStream fos = new FileOutputStream(dpc_lr_Bmp);
+                FileOutputStream fos = new FileOutputStream(dpc_tb_Bmp);
                 results[2].compress(Bitmap.CompressFormat.PNG, 100, fos);
             } catch (FileNotFoundException e) {
                 return null;
@@ -135,6 +143,8 @@ public class ComputeRefocusTask extends ImageProgressTask{
         updateFileStructure(outDir);
         return null;
     }
+    
+
 
     private Bitmap[] computeFocus(float z) {
         int width = mDataset.WIDTH-2*mDataset.XCROP;
@@ -142,7 +152,7 @@ public class ComputeRefocusTask extends ImageProgressTask{
 
         Mat result = new Mat(height, width, CvType.CV_32FC4);
         Mat result8 = new Mat(height, width, CvType.CV_8UC4);
-        
+
         Mat dpc_result_tb = new Mat(height, width, CvType.CV_32FC4);
         Mat dpc_result_tb8 = new Mat(height, width, CvType.CV_8UC4);
         
@@ -153,9 +163,8 @@ public class ComputeRefocusTask extends ImageProgressTask{
         Mat img32 = new Mat(height, width, CvType.CV_32FC4);
         Mat shifted;
         
-        for (int idx = 0; idx < mDataset.fileCount; idx++) {
-	        
-            //img = ImageUtils.toMat(BitmapFactory.decodeFile(mDataset.fileList[idx].toString()));
+        for (int idx = 0; idx < mDataset.fileCount; idx++)
+        {
 	        img = ImageUtils.toMat(BitmapFactory.decodeByteArray(fileByteList[idx], 0, fileByteList[idx].length));
             img = img.submat( mDataset.YCROP, mDataset.HEIGHT-mDataset.YCROP,mDataset.XCROP, mDataset.WIDTH-mDataset.XCROP);
             img.convertTo(img32, result.type());
@@ -171,38 +180,72 @@ public class ComputeRefocusTask extends ImageProgressTask{
             int yShift = (int) Math.round(z*tanv_lit[holeNum]);
 
             shifted = ImageUtils.circularShift(img32, yShift, xShift);
-
-            //add to result
-            //Log.d(TAG,String.format("result size: %dx%d , shifted size: %dx%d",result.width(),result.height(),shifted.width(),shifted.height()));
-            Core.add(result, shifted, result);
             
-            if (tanh_lit[holeNum] <= 0) //add LHS
+            if (mDataset.leftList.contains(holeNum)) //add LHS
+            {
                 Core.add(dpc_result_lr, shifted, dpc_result_lr);
-            /*
+            }
             else //subtract RHS
+            {
                 Core.subtract(dpc_result_lr, shifted, dpc_result_lr);
-                */
-            
-            if (tanv_lit[holeNum] <= 0) //add Top
-                Core.add(dpc_result_tb, shifted, dpc_result_tb);
-            /*
-            else //subtract Bottom
-                Core.subtract(dpc_result_tb, shifted, dpc_result_tb);
-                */
+            }
 
-            float progress = ((float)((idx+1) / (float)mDataset.fileCount));
+            if (mDataset.topList.contains(holeNum)) //add Top
+            {
+                Core.add(dpc_result_tb, shifted, dpc_result_tb);
+            }
+            else //subtract bottom
+            {
+                Core.subtract(dpc_result_tb, shifted, dpc_result_tb);
+            }
+            
+            Core.add(result, shifted, result);
+                
+            float progress = ((idx+1) / (float)mDataset.fileCount);
             onProgressUpdate((int)(progress * 100),-1);
             Log.d(TAG,String.format("progress: %f", progress));
         }
-
-        Core.MinMaxLocResult minMaxLocResult = Core.minMaxLoc(result.reshape(1));
-        result.convertTo(result8, CvType.CV_8UC4, 255/minMaxLocResult.maxVal);
         
-        minMaxLocResult = Core.minMaxLoc(dpc_result_lr.reshape(1));
-        dpc_result_lr8.convertTo(dpc_result_lr8, CvType.CV_8UC4, 255/minMaxLocResult.maxVal);
+        Core.MinMaxLocResult minMaxLocResult1 = Core.minMaxLoc(result.reshape(1));
+        result.convertTo(result8, CvType.CV_8UC4, 255/minMaxLocResult1.maxVal);
         
-        minMaxLocResult = Core.minMaxLoc(dpc_result_tb.reshape(1));
-        dpc_result_tb8.convertTo(dpc_result_tb8, CvType.CV_8UC4, 255/minMaxLocResult.maxVal);
+        Core.MinMaxLocResult minMaxLocResult2 = Core.minMaxLoc(dpc_result_lr.reshape(1));
+        dpc_result_lr.convertTo(dpc_result_lr8, CvType.CV_8UC4, 255/(minMaxLocResult2.maxVal - minMaxLocResult2.minVal), -minMaxLocResult2.minVal * 255.0/(minMaxLocResult2.maxVal - minMaxLocResult2.minVal));
+        
+        Core.MinMaxLocResult minMaxLocResult3 = Core.minMaxLoc(dpc_result_tb.reshape(1));
+        dpc_result_tb.convertTo(dpc_result_tb8, CvType.CV_8UC4, 255/(minMaxLocResult3.maxVal - minMaxLocResult3.minVal), -minMaxLocResult3.minVal * 255.0/(minMaxLocResult3.maxVal - minMaxLocResult3.minVal));
+        
+        /*
+        Log.d(TAG,String.format("result_min: %f, max: %f",minMaxLocResult1.minVal,minMaxLocResult1.maxVal));
+        Log.d(TAG,String.format("lr_min: %f, max: %f",minMaxLocResult2.minVal,minMaxLocResult2.maxVal));
+        Log.d(TAG,String.format("tb_min: %f, max: %f",minMaxLocResult3.minVal,minMaxLocResult3.maxVal));
+        */
+        
+        // remove transparency in DPC images
+        Scalar alphaMask = new Scalar(new double[]{1.0,1.0,1.0,255.0});
+        
+        Core.multiply(dpc_result_lr8, alphaMask, dpc_result_lr8);
+        Core.multiply(dpc_result_tb8, alphaMask, dpc_result_tb8);
+        
+        if (!mDataset.USE_COLOR_DPC)
+        {
+        	Imgproc.cvtColor(dpc_result_lr8, dpc_result_lr8,Imgproc.COLOR_BGR2GRAY);
+        	Imgproc.cvtColor(dpc_result_tb8, dpc_result_tb8,Imgproc.COLOR_BGR2GRAY);
+        }
+        
+        /*
+        // Cut off edges in DPC images
+        Point centerPt = new Point();
+        centerPt.x = Math.round((float)width/2.0);
+        centerPt.y = Math.round((float)height/2.0);
+        Mat circleMat = new Mat(dpc_result_lr8.size(), dpc_result_lr8.type());
+        Scalar color = new Scalar(255);
+		Core.circle(circleMat, centerPt, 200, color);
+		//Core.bitwise_and(circleMat, dpc_result_lr8, dpc_result_lr8);
+		//Core.bitwise_and(circleMat, dpc_result_tb8, dpc_result_tb8);
+		 * 
+		 * 
+		 */
         
         Bitmap[] outputBitmaps = new Bitmap[3];
         outputBitmaps[0] = ImageUtils.toBitmap(result8);
@@ -227,7 +270,8 @@ public class ComputeRefocusTask extends ImageProgressTask{
          MediaScannerConnection.scanFile(context,
                   fileListString, null,
                   new MediaScannerConnection.OnScanCompletedListener() {
-                      public void onScanCompleted(String path, Uri uri) {
+                      @Override
+					public void onScanCompleted(String path, Uri uri) {
                           //Log.i("TAG", "Finished scanning " + path);
                       }
                   });

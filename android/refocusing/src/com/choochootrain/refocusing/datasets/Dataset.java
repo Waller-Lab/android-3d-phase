@@ -1,11 +1,19 @@
 package com.choochootrain.refocusing.datasets;
 
 import java.io.File;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 // Constants for current image dataset
-public class Dataset {
+public class Dataset implements Serializable {
 	
-    public static final String UNITS = "mm";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	public static final String UNITS = "mm";
     public static final int SIZE = 7;
     public static final int LED_DISTANCE = 4;
     public static final int F_CONDENSER = 60; //mm
@@ -23,9 +31,11 @@ public class Dataset {
     public String DATASET_TYPE = ""; //Can be multimode, brightfield_scan, full_scan
     public String DATASET_HEADER = "";
     
-    public float ZMIN = -200;
+    public boolean USE_COLOR_DPC = false;
+    
+    public float ZMIN = -400;
     public float ZINC = 10;
-    public float ZMAX = 200;
+    public float ZMAX = 400;
     
     public int XCROP = 507;
     public int YCROP = 96;
@@ -50,6 +60,16 @@ public class Dataset {
     public  String getResultImagePath(String name) {
         return DATASET_PATH + DATASET_NAME + "/" + name + ".png";
     }
+    
+    //public final int[] leftList = new int[]{159,160,180,181,182,201,202,203,223,224,225,226,246,247,248,249,270,271,272,292,293,294,295,315,316,317,338,339,340,361};
+    //public final int[] rightList = new int[]{161,162,183,184,204,205,206,227,228,229,250,251,252,253,273,274,275,276,296,297,298,299,318,319,320,321,341,342,343,362};
+    //public final int[] topList = new int[]{270,271,272,273,274,275,276,292,293,294,295,296,297,298,299,315,316,317,318,319,320,321,338,339,340,341,342,343,361,362};
+    //public final int[] bottomList = new int[]{159,160,161,162,180,181,182,183,184,201,202,203,204,205,206,223,224,225,226,227,228,229,246,247,248,249,250,251,252,253};
+    
+    public List<Integer> leftList = Arrays.asList(159,160,180,181,182,201,202,203,223,224,225,226,246,247,248,249,270,271,272,292,293,294,295,315,316,317,338,339,340,361);
+    public List<Integer> rightList = Arrays.asList(161,162,183,184,204,205,206,227,228,229,250,251,252,253,273,274,275,276,296,297,298,299,318,319,320,321,341,342,343,362);
+    public List<Integer> topList = Arrays.asList(270,271,272,273,274,275,276,292,293,294,295,296,297,298,299,315,316,317,318,319,320,321,338,339,340,341,342,343,361,362);
+    public List<Integer> bottomList = Arrays.asList(159,160,161,162,180,181,182,183,184,201,202,203,204,205,206,223,224,225,226,227,228,229,246,247,248,249,250,251,252,253);
     
     // FORMAT: hole number, x, y, z in meters
     public final double[][] domeCoordinates = new double[][]{

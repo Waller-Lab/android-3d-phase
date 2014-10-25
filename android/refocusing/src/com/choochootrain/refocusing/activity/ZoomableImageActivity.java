@@ -1,8 +1,7 @@
 package com.choochootrain.refocusing.activity;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -12,8 +11,7 @@ import com.choochootrain.refocusing.view.ZoomableImageView;
 
 public class ZoomableImageActivity extends OpenCVActivity {
     private static final String TAG = "ZoomableImageActivity";
-    private static final int SEEK_SIZE = (int)(Dataset.MAX_DEPTH * 2 / Dataset.DEPTH_INC);
-    private static final float SEEK_RESOLUTION = Dataset.DEPTH_INC;
+
 
     private TextView imageInfo;
     private SeekBar focusDepth;
@@ -22,15 +20,27 @@ public class ZoomableImageActivity extends OpenCVActivity {
 
     private String imageType;
     private boolean useSlider;
-
+    
+    float zMin;
+    float seekInc;
+    float seekSize;
+    float zMax;
+    String outDir;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDataset =  (Dataset) getIntent().getExtras().get("dataset");
+        mDataset =  (Dataset) getIntent().getSerializableExtra("dataset");
         imageType = getIntent().getExtras().getString("type");
         useSlider = getIntent().getExtras().getBoolean("useSlider", true);
-
-
+        
+        zMin = mDataset.ZMIN;
+        seekInc = mDataset.ZINC;
+        zMax = mDataset.ZMAX;
+        outDir = mDataset.DATASET_PATH+"/Refocused/";
+        seekSize = (zMax-zMin)/seekInc;
+        
+        Log.d(TAG,String.format("zMin is %f, zMax is %f, outdir is %s",zMin,zMax, outDir));
+        
         if (useSlider)
             setContentView(R.layout.slider_image_view);
         else
@@ -48,16 +58,25 @@ public class ZoomableImageActivity extends OpenCVActivity {
         if (useSlider) {
             focusDepth = (SeekBar) findViewById(R.id.focusDepth);
             focusDepth.setEnabled(false);
-            focusDepth.setMax(SEEK_SIZE);
-            focusDepth.setProgress(SEEK_SIZE / 2);
+            focusDepth.setMax((int)seekSize);
+            focusDepth.setProgress((int)(seekSize / 2));
             focusDepth.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    float z = (progress - SEEK_SIZE / 2) * SEEK_RESOLUTION;
-                    String file = mDataset.getResultImagePath(imageType, z);
-                    Bitmap bmp = BitmapFactory.decodeFile(file);
-                    if (bmp != null) {
-                        imageView.setImage(bmp);
+                    float z = (progress - seekSize / 2) * seekInc;
+                    
+                    String file = "";
+                    if (imageType.equals("refocus"))
+                    	file = String.format("%s%srefocused_(%d).png", outDir, mDataset.DATASET_HEADER,(int)(z-zMin));
+                    else if (imageType.equals("dpc_tb"))
+                    	file = String.format("%s%sdpc_tb_(%d).png", outDir, mDataset.DATASET_HEADER,(int)(z-zMin));
+                    else if(imageType.equals("dpc_lr"))
+                    	file= String.format("%s%sdpc_lr_(%d).png", outDir, mDataset.DATASET_HEADER,(int)(z-zMin));
+                    else
+                    	Log.d(TAG,"ERROR - Incorrect dataset type!");
+                    Log.d(TAG,file);
+                    if (file != null) {
+                        imageView.setImage(file);
                         imageInfo.setText(imageType + " at " + z + " " + Dataset.UNITS);
                     }
                 }
@@ -73,8 +92,8 @@ public class ZoomableImageActivity extends OpenCVActivity {
                 }
             });
         } else {
-            Bitmap bmp = BitmapFactory.decodeFile(mDataset.getResultImagePath(imageType));
-            imageView.setImage(bmp);
+            String file = mDataset.getResultImagePath(imageType);
+            imageView.setImage(file);
         }
     }
 

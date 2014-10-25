@@ -17,12 +17,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/viewRefocus"
         android:text="View refocus" />
-
+    <!-- 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/computeDPC"
         android:text="Compute DPC" />
+    -->
 
     <Button
         android:layout_width="match_parent"
@@ -30,16 +31,17 @@
         android:id="@+id/viewDPC"
         android:text="View DPC" />
 
+    <!--
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/computeDarkfield"
         android:text="Compute darkfield" />
-
+    
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/viewDarkfield"
         android:text="View darkfield" />
-
+    -->
 </LinearLayout>
