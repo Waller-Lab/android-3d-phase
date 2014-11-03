@@ -582,4 +582,28 @@ public class Dataset implements Serializable {
     /*507*/ {0.0384, 0.0085, 0.0453},
     /*508*/ {0.0384, 0.0119, 0.0445},
     };
+    
+    
+    /** color TIE fields / methods **/
+    public double TIE_K = -1;
+	public double TIE_DELTA_Z = -1;
+	public double TIE_EPSILON = -1;
+	public String TIE_CALIB_PATH = "";
+	public String TIE_CALIB_NAME = "";
+	public String TIE_IMG_PATH = "";
+	public String TIE_IMG_NAME = "";
+	public String TIE_RESULT_DIR = "";
+	
+	public  String getTIEInputImagePath() {
+    	return String.format("%s%s.jpeg", TIE_IMG_PATH, TIE_IMG_NAME);
+    }
+	
+	public  String getTIECalibImagePath() {
+    	return String.format("%s%s.jpeg", TIE_CALIB_PATH, TIE_CALIB_NAME);
+    }
+
+    public  String getTIEResultImagePath() {
+        return String.format("%s%s%s_k%d_z%d_e%d.png", TIE_IMG_PATH, TIE_RESULT_DIR, TIE_IMG_NAME, TIE_K, TIE_DELTA_Z, TIE_EPSILON);
+    }
+
 }
