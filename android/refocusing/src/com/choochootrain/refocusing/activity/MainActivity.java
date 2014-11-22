@@ -2,13 +2,13 @@ package com.choochootrain.refocusing.activity;
 
 import java.io.File;
 import java.io.FileFilter;
+
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +16,7 @@ import android.widget.Button;
 
 import com.choochootrain.refocusing.R;
 import com.choochootrain.refocusing.datasets.Dataset;
+import com.choochootrain.refocusing.tasks.ComputePhaseHeightMap;
 import com.choochootrain.refocusing.tasks.ComputeRefocusTask;
 
 
@@ -28,6 +29,7 @@ public class MainActivity extends OpenCVActivity {
     private Button viewDPC;
     private Button computeDarkfield;
     private Button viewDarkfield;
+    private Button computePhaseImage;
     
     private static final int ACTIVITY_CHOOSE_FILE = 3;
     public Dataset mDataset =  new Dataset();
@@ -59,6 +61,15 @@ public class MainActivity extends OpenCVActivity {
                 MainActivity.this.startViewActivity("refocus", true, mDataset);
             }
         });
+        
+        computePhaseImage = (Button) findViewById(R.id.computePhaseImage);
+        computePhaseImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new ComputePhaseHeightMap(MainActivity.this).execute(mDataset);
+            }
+        });
+        
         /*
         computeDPC = (Button) findViewById(R.id.computeDPC);
         computeDPC.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +130,8 @@ public class MainActivity extends OpenCVActivity {
               Log.d(TAG,String.format("FilePath is: %s", FilePath));
               // Extract directory:
               mDataset.DATASET_PATH = FilePath.substring(0,FilePath.lastIndexOf("/"));
+              mDataset.TIE_IMG_PATH = FilePath.substring(0,FilePath.lastIndexOf("/"));
+              mDataset.TIE_IMG_NAME = FilePath.substring(FilePath.lastIndexOf("/"));
               Log.d(TAG,String.format("Path is: %s", mDataset.DATASET_PATH));
               File fileList = new File(mDataset.DATASET_PATH);
               
