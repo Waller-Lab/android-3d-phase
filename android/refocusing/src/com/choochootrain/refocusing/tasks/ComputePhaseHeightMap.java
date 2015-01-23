@@ -2,11 +2,15 @@ package com.choochootrain.refocusing.tasks;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
+import org.opencv.core.Core.MinMaxLocResult;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.highgui.Highgui;
 
 import prefuse.util.ColorMap;
 import android.content.Context;
@@ -36,27 +40,49 @@ public class ComputePhaseHeightMap extends ImageProgressTask {
 		Log.d("filepath", mDataset.getTIEResultImagePath());
 		
 		Bitmap bitmap = BitmapFactory.decodeFile(mDataset.getTIEInputImagePath(), options);
-		Bitmap result = getPhaseImage(bitmap);
+		Mat result = getPhaseImage(bitmap, mDataset);
 		
 		File outputDir = new File(mDataset.TIE_RESULT_DIR);
 		if(!outputDir.exists()){
 			outputDir.mkdir();
 		}
-		writeToFile(result, mDataset.getTIEResultImagePath());
+		//writeToFile(result, mDataset.getTIEResultImagePath());
+		Highgui.imwrite(mDataset.getTIEResultImagePath(), result);
 		return null;
 	}
 	
-	private Bitmap getPhaseImage(Bitmap in){
+	private Mat getPhaseImage(Bitmap in, Dataset mDataset){
 		Mat inMat = new Mat(in.getHeight(), in.getWidth(), CvType.CV_8UC4);
 		Utils.bitmapToMat(in, inMat);
 		
-		computePhaseImage(inMat.getNativeObjAddr());
+		double[] minMax = computePhaseImage(inMat.getNativeObjAddr());
+		
+		File minMaxFile = new File(mDataset.getTIEInfoFilePath());
+		FileWriter writer = null;
+		
+		try{
+			writer  = new FileWriter(minMaxFile);
+			String data = String.format("%s:%f , %s:%f","min", minMax[0], "max", minMax[1]);
+			writer.write(data);
+		} catch (IOException e) {
+			Log.d("file write", e.toString());
+		} finally {
+			try {
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		inMat.convertTo(inMat, CvType.CV_8UC4);
 		
-		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+
+		
+		/**Bitmap.Config conf = Bitmap.Config.ARGB_8888;
 		Bitmap out = Bitmap.createBitmap(inMat.height(), inMat.width(), conf);
 		Utils.matToBitmap(inMat, out);
-		return out;
+		return out;**/
+		return inMat;
 	}
 	
 	
@@ -138,6 +164,6 @@ public class ComputePhaseHeightMap extends ImageProgressTask {
 	}
 	
 	/** Native Functions **/
-	public native void computePhaseImage(long inputAddr);
+	public native double[] computePhaseImage(long inputAddr);
 
 }

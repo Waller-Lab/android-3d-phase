@@ -13,6 +13,7 @@ import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.choochootrain.refocusing.R;
 import com.choochootrain.refocusing.datasets.Dataset;
@@ -30,6 +31,16 @@ public class MainActivity extends OpenCVActivity {
     private Button computeDarkfield;
     private Button viewDarkfield;
     private Button computePhaseImage;
+    private Button selectFile;
+    
+    private EditText kEditText;
+    private EditText deltaZEditText;
+    private EditText epsilonEditText;
+    
+    private double k;
+    private double deltaZ;
+    private double epsilon;
+    
     
     private static final int ACTIVITY_CHOOSE_FILE = 3;
     public Dataset mDataset =  new Dataset();
@@ -39,14 +50,10 @@ public class MainActivity extends OpenCVActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        // Ask user to select a file using any file browser
-        Intent chooseFile;
-        Intent intent;
-        chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-        chooseFile.setType("file/*");
-        intent = Intent.createChooser(chooseFile, "Choose a file inside the directory to use");
-        startActivityForResult(intent, ACTIVITY_CHOOSE_FILE);
-
+        kEditText = (EditText) findViewById(R.id.k);
+        deltaZEditText = (EditText) findViewById(R.id.delta_z);
+        epsilonEditText = (EditText) findViewById(R.id.epsilon);
+        
         computeRefocus = (Button) findViewById(R.id.computeRefocus);
         computeRefocus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,14 +68,30 @@ public class MainActivity extends OpenCVActivity {
                 MainActivity.this.startViewActivity("refocus", true, mDataset);
             }
         });
-        
         computePhaseImage = (Button) findViewById(R.id.computePhaseImage);
         computePhaseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+            	mDataset.TIE_K = Double.parseDouble(kEditText.getText().toString());
+                mDataset.TIE_DELTA_Z = Double.parseDouble(deltaZEditText.getText().toString());
+                mDataset.TIE_EPSILON = Double.parseDouble(epsilonEditText.getText().toString());
                 new ComputePhaseHeightMap(MainActivity.this).execute(mDataset);
             }
         });
+        
+        selectFile = (Button) findViewById(R.id.selectFile);
+        selectFile.setOnClickListener(new View.OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent chooseFile;
+		        Intent intent;
+		        chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+		        chooseFile.setType("file/*");
+		        intent = Intent.createChooser(chooseFile, "Choose a file inside the directory to use");
+		        startActivityForResult(intent, ACTIVITY_CHOOSE_FILE);
+			}
+		});
         
         /*
         computeDPC = (Button) findViewById(R.id.computeDPC);

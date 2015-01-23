@@ -592,10 +592,10 @@ public class Dataset implements Serializable {
 	public String TIE_CALIB_NAME = "";
 	public String TIE_IMG_PATH = "";
 	public String TIE_IMG_NAME = "";
-	public String TIE_RESULT_DIR = "";
+	public String TIE_RESULT_DIR = "/sdcard/Pictures/ColorTIE";
 	
 	public  String getTIEInputImagePath() {
-    	return String.format("%s%s.jpeg", TIE_IMG_PATH, TIE_IMG_NAME);
+    	return String.format("%s%s", TIE_IMG_PATH, TIE_IMG_NAME);
     }
 	
 	public  String getTIECalibImagePath() {
@@ -603,7 +603,15 @@ public class Dataset implements Serializable {
     }
 
     public  String getTIEResultImagePath() {
-        return String.format("%s%s%s_k%d_z%d_e%d.png", TIE_IMG_PATH, TIE_RESULT_DIR, TIE_IMG_NAME, TIE_K, TIE_DELTA_Z, TIE_EPSILON);
+    	String output_name = TIE_IMG_NAME.substring(0, TIE_IMG_NAME.lastIndexOf("."));
+        return String.format("%s%s_k%d_z%d_e%d.jpg", TIE_RESULT_DIR, output_name, (int) TIE_K, (int) TIE_DELTA_Z, (int) TIE_EPSILON);
+       
+    }
+    
+    public  String getTIEInfoFilePath() {
+    	String output_name = TIE_IMG_NAME.substring(0, TIE_IMG_NAME.lastIndexOf("."));
+        return String.format("%s%s_k%d_z%d_e%d.txt", TIE_RESULT_DIR, output_name, (int) TIE_K, (int) TIE_DELTA_Z, (int) TIE_EPSILON);
+       
     }
 
 }
