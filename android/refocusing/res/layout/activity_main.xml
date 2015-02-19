@@ -11,12 +11,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/computeRefocus"
         android:text="Compute refocus" />
-
+    
+   
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/viewRefocus"
         android:text="View refocus" />
+    
+    
     <!-- 
     <Button
         android:layout_width="match_parent"
@@ -44,4 +47,49 @@
         android:id="@+id/viewDarkfield"
         android:text="View darkfield" />
     -->
+     <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/computePhaseImage"
+        android:text="Compute Phase Image" />
+     <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/selectFile"
+        android:text="Select File" />
+     
+     <LinearLayout
+         android:orientation="horizontal"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content">
+         
+         <EditText 
+             android:id="@+id/k"
+             android:inputType="number"
+             android:layout_weight="1"
+             android:layout_width="0dp"
+             android:layout_height="match_parent"
+             android:hint="k"
+             />
+         
+         <EditText 
+             android:id="@+id/delta_z"
+             android:inputType="number"
+             android:layout_weight="1"
+             android:layout_width="0dp"
+             android:layout_height="match_parent"
+             android:hint="delta z"
+             />
+         
+         <EditText 
+             android:id="@+id/epsilon"
+             android:inputType="number"
+             android:layout_weight="1"
+             android:layout_width="0dp"
+             android:layout_height="match_parent"
+             android:hint="epsilon"
+             />
+          
+     </LinearLayout>
+     
 </LinearLayout>
