@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-include /home/zkphil/develop/NVPACK/OpenCV-2.4.8.2-Tegra-sdk/sdk/native/jni/OpenCV-tegra3.mk
+include $(OPENCV_ROOT)/sdk/native/jni/OpenCV.mk
 
 LOCAL_MODULE    := nativeProcessing
 LOCAL_SRC_FILES := native.cpp

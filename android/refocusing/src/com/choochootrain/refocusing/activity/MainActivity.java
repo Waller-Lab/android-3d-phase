@@ -23,6 +23,9 @@ import com.choochootrain.refocusing.tasks.ComputeRefocusTask;
 
 
 public class MainActivity extends OpenCVActivity {
+	static {
+        System.loadLibrary("nativeProcessing");
+    }
     private static final String TAG = "RefocusingMain";
 
     private Button computeRefocus;
@@ -87,6 +90,10 @@ public class MainActivity extends OpenCVActivity {
         computeDPCRefocus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+            	mDataset.DPC_ZMAX = 100;
+            	mDataset.DPC_ZMIN = -100;
+            	mDataset.DPC_ZSTEP = 10;
+            	mDataset.DPC_FOCUS_DATASET_ROOT = "/sdcard/Pictures/DPC_refocus_data";
                 new ComputeDPCRefocusTask(MainActivity.this).execute(mDataset);
             }
         });
