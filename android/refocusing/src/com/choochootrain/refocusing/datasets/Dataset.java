@@ -613,5 +613,11 @@ public class Dataset implements Serializable {
         return String.format("%s%s_k%d_z%d_e%d.txt", TIE_RESULT_DIR, output_name, (int) TIE_K, (int) TIE_DELTA_Z, (int) TIE_EPSILON);
        
     }
+    
+    /** DPC Refocus fields **/
+    public float DPC_ZMIN = -1;
+    public float DPC_ZSTEP = -1;
+    public float DPC_ZMAX = -1;
+    public String DPC_FOCUS_DATASET_ROOT = "";
 
 }

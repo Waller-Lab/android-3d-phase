@@ -17,6 +17,7 @@ import android.widget.EditText;
 
 import com.choochootrain.refocusing.R;
 import com.choochootrain.refocusing.datasets.Dataset;
+import com.choochootrain.refocusing.tasks.ComputeDPCRefocusTask;
 import com.choochootrain.refocusing.tasks.ComputePhaseHeightMap;
 import com.choochootrain.refocusing.tasks.ComputeRefocusTask;
 
@@ -31,6 +32,7 @@ public class MainActivity extends OpenCVActivity {
     private Button computeDarkfield;
     private Button viewDarkfield;
     private Button computePhaseImage;
+    private Button computeDPCRefocus;
     private Button selectFile;
     
     private EditText kEditText;
@@ -61,6 +63,7 @@ public class MainActivity extends OpenCVActivity {
                 new ComputeRefocusTask(MainActivity.this).execute(mDataset);
             }
         });
+        
         viewRefocus = (Button) findViewById(R.id.viewRefocus);
         viewRefocus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +71,7 @@ public class MainActivity extends OpenCVActivity {
                 MainActivity.this.startViewActivity("refocus", true, mDataset);
             }
         });
+        
         computePhaseImage = (Button) findViewById(R.id.computePhaseImage);
         computePhaseImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +80,14 @@ public class MainActivity extends OpenCVActivity {
                 mDataset.TIE_DELTA_Z = Double.parseDouble(deltaZEditText.getText().toString());
                 mDataset.TIE_EPSILON = Double.parseDouble(epsilonEditText.getText().toString());
                 new ComputePhaseHeightMap(MainActivity.this).execute(mDataset);
+            }
+        });
+        
+        computeDPCRefocus = (Button) findViewById(R.id.computeDPCRefocus);
+        computeDPCRefocus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new ComputeDPCRefocusTask(MainActivity.this).execute(mDataset);
             }
         });
         

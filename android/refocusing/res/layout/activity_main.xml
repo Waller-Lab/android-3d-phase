@@ -58,6 +58,12 @@
         android:id="@+id/selectFile"
         android:text="Select File" />
      
+     <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/computeDPCRefocus"
+        android:text="Compute DPC Refocus" />
+     
      <LinearLayout
          android:orientation="horizontal"
          android:layout_width="match_parent"
